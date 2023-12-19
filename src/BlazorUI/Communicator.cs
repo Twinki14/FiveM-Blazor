@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
+using CitizenFX.Core.Native;
 using Microsoft.JSInterop;
 using RestSharp;
 
-namespace BlazorClient;
+namespace BlazorUI;
 
 public static class Communicator
 {
@@ -13,6 +14,8 @@ public static class Communicator
 
     public static string TriggerNuiCallback(string name, dynamic data)
     {
+        API.GetCurrentResourceName();
+        
         string json = JsonSerializer.Serialize(data);
         Console.WriteLine($"Triggering nui callback {name}: {json}");
 
@@ -27,18 +30,18 @@ public static class Communicator
         return response.Content;
     }
 
-    [JSInvokable("OnNuiEvent")]
+    /*[JSInvokable("OnNuiEvent")]
     public static void OnNuiEvent(string name, string data)
     {
         Console.WriteLine("Got event " + name);
         if (!_events.ContainsKey(name)) return;
 
-        foreach (Action<string> callback in _events[name])
+        foreach (var callback in _events[name])
             callback.Invoke(data);
-    }
+    }*/
 
-    [JSInvokable("SetParentResourceName")]
-    public static void SetParentResourceName(string name)
+    [JSInvokable("SetResourceName ")]
+    public static void SetResourceName(string name)
     {
         ParentResourceName = name;
     }
