@@ -1,2 +1,2 @@
-src/Blazor-UI/wwwroot/css/bootstrap/** linguist-vendored
-src/Blazor-UI/wwwroot/css/material-dark.css linguist-vendored
+src/BlazorUI/wwwroot/css/bootstrap/** linguist-vendored
+src/BlazorUI/wwwroot/css/material-dark.css linguist-vendored

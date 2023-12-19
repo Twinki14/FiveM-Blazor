@@ -5,6 +5,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 		..\fxmanifest.lua = ..\fxmanifest.lua
 		..\readme.md = ..\readme.md
 		..\.gitignore = ..\.gitignore
+		..\.gitattributes = ..\.gitattributes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}"
