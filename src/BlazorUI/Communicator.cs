@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using CitizenFX.Core.Native;
-using Microsoft.JSInterop;
-using RestSharp;
+﻿using Microsoft.JSInterop;
 
 namespace BlazorUI;
 
@@ -12,7 +9,7 @@ public static class Communicator
     private static Dictionary<string, List<Action<string>>> _events = new();
     private static string ParentResourceName { get; set; }
 
-    public static string TriggerNuiCallback(string name, dynamic data)
+    /*public static string TriggerNuiCallback(string name, dynamic data)
     {
         API.GetCurrentResourceName();
         
@@ -28,7 +25,7 @@ public static class Communicator
 
         Console.WriteLine(response.Content);
         return response.Content;
-    }
+    }*/
 
     /*[JSInvokable("OnNuiEvent")]
     public static void OnNuiEvent(string name, string data)

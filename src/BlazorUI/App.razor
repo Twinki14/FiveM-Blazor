@@ -1,5 +1,22 @@
-﻿<HeadContent>
-    <MessageListener/>
-</HeadContent>
+﻿@using CitizenFX.Blazor.WebAssembly
+@inherits NuiComponent
+
+@inject ILogger<App> _Logger
 
 <h1>BlazorUI</h1>
+<OtherPage />
+<OtherPage />
+
+@code {
+    [NuiMessageHandler("showui:hello")]
+    public void OnShowUi(string hello)
+    {
+        _Logger.LogInformation("OnShowUi: {Hello}", hello);
+    }
+    
+    [NuiMessageHandler("showui:empty")]
+    public void OnShowUi()
+    {
+        _Logger.LogInformation("OnShowUi: {Hello}");
+    }
+}

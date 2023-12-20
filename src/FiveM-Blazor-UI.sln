@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitizenFX.Blazor.WebAssembly", "CitizenFX.Blazor.WebAssembly\CitizenFX.Blazor.WebAssembly.csproj", "{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +22,9 @@ Global
 		{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

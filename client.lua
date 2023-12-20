@@ -1,8 +1,11 @@
 RegisterCommand('ui', function()
-    SendNUIMessage({
-        hello = "world",
-        action = "showMessage"
-    })
+	SendNUIMessage({
+		type = "showui",
+		dto = {
+			hello = "",
+			message = ""
+		}
+	})
 
-    TriggerEvent("eventName")
+    TriggerEvent("showui")
 end)
