@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,7 @@ public class NuiMessageListener : ComponentBase
     private ILogger<NuiMessageListener> Logger { get; set; }
 
     private string? _assemblyName;
-    private string? _nuiEventMethod;
+    private string? _nuiMessageMethod;
 
     private static NuiMessageListener? _instance;
     private static ILogger<NuiMessageListener>? _logger;
@@ -26,7 +25,7 @@ public class NuiMessageListener : ComponentBase
         }
 
         _assemblyName = typeof(NuiMessageListener).Assembly.GetName().Name;
-        _nuiEventMethod = nameof(OnNuiEvent);
+        _nuiMessageMethod = nameof(OnNuiMessage);
 
         _instance = this;
         _logger = Logger;
@@ -39,14 +38,14 @@ public class NuiMessageListener : ComponentBase
         
         builder.AddMarkupContent(2, $@"
         window.addEventListener('message', (event) => {{
-            DotNet.invokeMethod('{_assemblyName}', '{_nuiEventMethod}', event.data);
+            DotNet.invokeMethod('{_assemblyName}', '{_nuiMessageMethod}', event.data);
         }});");
         
         builder.CloseElement();
     }
 
     [JSInvokable]
-    public static void OnNuiEvent(JsonDocument eventData)
+    public static void OnNuiMessage(JsonDocument eventData)
     {
         var methods = NuiComponent.FindMethods();
 
@@ -57,15 +56,52 @@ public class NuiMessageListener : ComponentBase
         
         var identifiedMethods = methods.Where(m => m.Type == identifierValue.GetString()).ToList();
         
+        // Optionally, if it's > 1, then check and make sure all identified methods have the same number of params and all params are have the same types and names
         if (identifiedMethods.Count > 1)
         {
-            throw new InvalidOperationException("");
+            throw new InvalidOperationException($"More than one method is attached to the {nameof(NuiMessageHandler)} attribute with the type identifier {identifierValue}");
         }
 
-        var first = identifiedMethods.First();
+        var identifiedMethod = identifiedMethods.First();
+        var methodParams = identifiedMethod.MethodInfo.GetParameters();
+        var methodValues = new List<object>();
+
+        foreach (var param in methodParams)
+        {
+            try
+            {
+                if (param.Name is null)
+                {
+                    throw new Exception();
+                }
+                
+                if (eventData.RootElement.TryGetProperty(param.Name, out var element))
+                {
+                    var deserialized = element.Deserialize(param.ParameterType);
+                    if (deserialized is not null)
+                    {
+                        methodValues.Add(deserialized);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Deserialized object is null, this isn't expected");
+                    }
+                }
+                else
+                {
+                    _logger?.LogError("Property not found {ParamName}", param.Name);
+                    // log a warning or error, throw a exception indicating that the parameter was not found in the received message
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogCritical(e, $"Critical exception encountered in {nameof(NuiMessageHandler)}");
+                return;
+            }
+        }
+
+        _logger?.LogInformation("MethodParams: {MethodParams} MethodValues: {MethodValues}", methodParams, methodValues);
         
-        // Loop through the method params of first
-        // if its not found in the json, throw exception and exit
-        // if it is found, deserialize and add to a list of param values to be invoked with
+        identifiedMethod.MethodInfo.Invoke(identifiedMethod.Instance, methodValues.ToArray());
     }
 }
