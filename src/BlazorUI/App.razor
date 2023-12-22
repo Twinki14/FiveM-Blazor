@@ -5,11 +5,20 @@
 
 <h1>BlazorUI</h1>
 
+@if (_clockMinutes > 0) 
+{
+    <h4>@_clockMinutes</h4>
+}
+
 @code {
+
+    private int _clockMinutes { get; set; } = -1;
+    
     [NuiMessageHandler("showui:hello")]
-    public void OnShowUi(string hello)
+    public void OnShowUi(string hello, int time)
     {
-        _Logger.LogInformation("OnShowUi: {Hello}", hello);
+        _clockMinutes = time;
+        StateHasChanged();
     }
     
     [NuiMessageHandler("showui")]

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Logging;
@@ -6,7 +7,7 @@ using Microsoft.JSInterop;
 
 namespace CitizenFX.Blazor.WebAssembly;
 
-public class NuiMessageListener : ComponentBase
+public partial class NuiMessageListener : ComponentBase
 {
     [Inject]
     private ILogger<NuiMessageListener> Logger { get; set; }
@@ -16,6 +17,8 @@ public class NuiMessageListener : ComponentBase
 
     private static NuiMessageListener? _instance;
     private static ILogger<NuiMessageListener>? _logger;
+
+    public static JsonSerializerOptions JsonSerializerOptions = new(); 
 
     protected override void OnInitialized()
     {
@@ -77,7 +80,7 @@ public class NuiMessageListener : ComponentBase
                 
                 if (eventData.RootElement.TryGetProperty(param.Name, out var element))
                 {
-                    var deserialized = element.Deserialize(param.ParameterType);
+                    var deserialized = element.Deserialize(param.ParameterType, JsonSerializerOptions);
                     if (deserialized is not null)
                     {
                         methodValues.Add(deserialized);
@@ -89,19 +92,23 @@ public class NuiMessageListener : ComponentBase
                 }
                 else
                 {
-                    _logger?.LogError("Property not found {ParamName}", param.Name);
-                    // log a warning or error, throw a exception indicating that the parameter was not found in the received message
+                    LogErrorPropertyNotFound(_logger!, param.Name, param.ParameterType);
+                    return;
                 }
             }
             catch (Exception e)
             {
-                _logger?.LogCritical(e, $"Critical exception encountered in {nameof(NuiMessageHandler)}");
+                LogCriticalJsonBinding(_logger!, e, param.Name, param.ParameterType);
                 return;
             }
         }
-
-        _logger?.LogInformation("MethodParams: {MethodParams} MethodValues: {MethodValues}", methodParams, methodValues);
         
         identifiedMethod.MethodInfo.Invoke(identifiedMethod.Instance, methodValues.ToArray());
     }
+    
+    [LoggerMessage(1, LogLevel.Critical, "Critical exception in {caller} when attempting to bind to a handler method with a parameter name {parameterName} and parameter type {parameterType}", EventName = "Handler method parameter JSON binding")]
+    static partial void LogCriticalJsonBinding(ILogger logger, Exception ex, string? parameterName, Type parameterType, [CallerMemberName] string caller = nameof(NuiMessageListener));
+    
+    [LoggerMessage(2, LogLevel.Critical, "Parameter not found in the handler when attempting to bind with a parameter name {parameterName} and parameter type {parameterType}", EventName = "Handler method parameter discovery")]
+    static partial void LogErrorPropertyNotFound(ILogger logger, string? parameterName, Type parameterType, [CallerMemberName] string caller = nameof(NuiMessageListener));
 }

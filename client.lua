@@ -1,12 +1,11 @@
 RegisterCommand('ui', function()
 	SendNUIMessage({
 		type = "showui:hello",
-		hello = 14,
+		hello = "test",
+		time = GetClockMinutes(),
 		dto = {
 			hello = "",
 			message = ""
 		}
 	})
-
-    TriggerEvent("showui")
 end)
