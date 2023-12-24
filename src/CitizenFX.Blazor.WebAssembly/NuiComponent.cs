@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace CitizenFX.Blazor.WebAssembly;
 
+/// <summary>
+/// A FiveM Nui helper-component. Required for <see cref="NuiMessageHandler"/> methods to be invoked.
+/// </summary>
+/// <remarks>
+/// Inherits <see cref="ComponentBase"/>.
+/// </remarks>
 public class NuiComponent : ComponentBase
 {
     private static readonly List<NuiComponent> Instances = new();
@@ -25,7 +31,7 @@ public class NuiComponent : ComponentBase
         public string Type { get; } = type;
     }
 
-    internal static List<MethodInfoWithInstance> FindMethods()
+    internal static IEnumerable<MethodInfoWithInstance> FindMethods()
     {
         var methods = new List<MethodInfoWithInstance>();
 

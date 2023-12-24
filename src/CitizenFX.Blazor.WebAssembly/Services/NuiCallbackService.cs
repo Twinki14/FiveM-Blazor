@@ -13,7 +13,8 @@ public class NuiCallbackService(
     
     private string? ResourceName { get; set; }
     private static readonly SemaphoreSlim ResourceNameSemaphore = new(1, 1);
-
+    
+    /// <inheritdoc/>
     public async ValueTask<HttpResponseMessage> TriggerNuiCallbackAsync<T>(string callback, T value, CancellationToken cancellationToken = default)
     {
         var resourceName = await GetResourceNameAsync(cancellationToken);
@@ -26,6 +27,10 @@ public class NuiCallbackService(
         }
     }
 
+    /// <summary>
+    /// Invokes 'eval' using the JS runtime to get the value of 'window.location.host', which represents the name of the resource.
+    /// Uses a semaphore slim, so that we only ever need to invoke 'eval' once.
+    /// </summary>
     private async ValueTask<string> GetResourceNameAsync(CancellationToken cancellationToken)
     {
         if (!string.IsNullOrEmpty(ResourceName))

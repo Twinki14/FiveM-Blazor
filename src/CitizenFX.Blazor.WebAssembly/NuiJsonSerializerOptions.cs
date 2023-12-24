@@ -2,7 +2,13 @@
 
 namespace CitizenFX.Blazor.WebAssembly;
 
+/// <summary>
+/// The internal <see cref="JsonSerializerOptions"/>
+/// </summary>
 internal static class NuiJsonSerializerOptions
 {
-    internal static JsonSerializerOptions Options { get; set; } = new();
+    /// <summary>
+    /// Configured in `<see cref="ServiceCollectionExtensions.AddNuiServices"/>
+    /// </summary>
+    internal static JsonSerializerOptions Options { get; } = new();
 }

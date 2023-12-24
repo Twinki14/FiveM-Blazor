@@ -8,10 +8,21 @@ using Microsoft.JSInterop;
 
 namespace CitizenFX.Blazor.WebAssembly;
 
+/// <summary>
+/// A component that attaches a JavaScript event listener to the window, to listen and distribute Nui Messages to <see cref="NuiMessageHandler"/> attributed methods.
+/// </summary>
+/// <remarks>
+/// Should only ever be included as a Root component in the <see cref="WebAssemblyHostBuilder"/>
+/// </remarks>
+/// <example>
+/// <code>
+/// builder.RootComponents.Add&lt;NuiMessageListener&gt;("#nui-message-listener");
+/// </code>
+/// </example>
 public partial class NuiMessageListener : ComponentBase
 {
     [Inject]
-    private ILogger<NuiMessageListener> Logger { get; set; }
+    private ILogger<NuiMessageListener> Logger { get; set; } = default!;
 
     private string? _assemblyName;
     private string? _nuiMessageMethod;
@@ -23,7 +34,7 @@ public partial class NuiMessageListener : ComponentBase
     {
         if (_instance != null)
         {
-            throw new InvalidOperationException($"{nameof(NuiMessageListener)} should only ever be instantiated once.");
+            throw new InvalidOperationException($"{nameof(NuiMessageListener)} should only ever be instantiated once as a Root component.");
         }
 
         _assemblyName = typeof(NuiMessageListener).Assembly.GetName().Name;
