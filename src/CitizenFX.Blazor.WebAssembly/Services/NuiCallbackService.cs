@@ -1,16 +1,11 @@
 ﻿using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 
 namespace CitizenFX.Blazor.WebAssembly.Services;
 
-public class NuiCallbackService(
-    IJSRuntime jsRuntime,
-    ILogger<NuiCallbackService> logger)
-    : INuiCallbackService
+/// <inheritdoc/>
+public class NuiCallbackService(IJSRuntime jsRuntime) : INuiCallbackService
 {
-    private readonly ILogger<NuiCallbackService> _logger = logger;
-    
     private string? ResourceName { get; set; }
     private static readonly SemaphoreSlim ResourceNameSemaphore = new(1, 1);
     
