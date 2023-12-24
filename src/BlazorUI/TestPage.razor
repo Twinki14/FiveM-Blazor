@@ -1,0 +1,13 @@
+﻿@using CitizenFX.Extensions.Blazor.WebAssembly
+@inherits CitizenFX.Extensions.Blazor.WebAssembly.NuiComponent
+@inject ILogger<TestPage> _Logger;
+
+<h4>test-page</h4>
+
+@code {
+    [NuiMessageHandler("showui:test")]
+    public void ShowUiTest()
+    {
+        _Logger.LogInformation("ShowUitest");
+    }
+}

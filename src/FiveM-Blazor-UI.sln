@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{8FA3E65F-D6DE-4CE1-847B-AEB94F5C6556}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitizenFX.Blazor.WebAssembly", "CitizenFX.Blazor.WebAssembly\CitizenFX.Blazor.WebAssembly.csproj", "{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitizenFX.Extensions.Blazor.WebAssembly", "CitizenFX.Extensions.Blazor.WebAssembly\CitizenFX.Extensions.Blazor.WebAssembly.csproj", "{892DA0EA-FB80-4544-BE4A-BB0CBD40D6B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

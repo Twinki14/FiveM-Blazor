@@ -6,9 +6,9 @@ RegisterCommand('ui', function()
 end)
 
 RegisterNUICallback('getItemInfo', function(data, cb)
-	Wait(2000)
+	Wait(400)
 	SendNUIMessage({
 		type = "showui:hello",
-		hello = "after",
+		hello = "before",
 	})
 end)

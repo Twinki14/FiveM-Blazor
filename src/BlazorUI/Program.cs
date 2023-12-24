@@ -1,5 +1,5 @@
 using BlazorUI;
-using CitizenFX.Blazor.WebAssembly;
+using CitizenFX.Extensions.Blazor.WebAssembly;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;

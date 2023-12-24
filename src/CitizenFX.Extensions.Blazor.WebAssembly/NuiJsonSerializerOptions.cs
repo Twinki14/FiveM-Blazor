@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace CitizenFX.Blazor.WebAssembly;
+namespace CitizenFX.Extensions.Blazor.WebAssembly;
 
 /// <summary>
 /// The internal <see cref="JsonSerializerOptions"/>

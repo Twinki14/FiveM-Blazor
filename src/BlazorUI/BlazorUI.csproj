@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CitizenFX.Blazor.WebAssembly\CitizenFX.Blazor.WebAssembly.csproj" />
+    <ProjectReference Include="..\CitizenFX.Extensions.Blazor.WebAssembly\CitizenFX.Extensions.Blazor.WebAssembly.csproj" />
   </ItemGroup>
 
 </Project>

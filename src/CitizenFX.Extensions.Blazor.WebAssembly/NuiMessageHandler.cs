@@ -1,4 +1,4 @@
-﻿namespace CitizenFX.Blazor.WebAssembly;
+﻿namespace CitizenFX.Extensions.Blazor.WebAssembly;
 
 /// <summary>
 /// Any method with this attribute will be considered when handling Nui Messages.

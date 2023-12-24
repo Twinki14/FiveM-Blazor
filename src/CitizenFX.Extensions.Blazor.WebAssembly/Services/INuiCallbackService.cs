@@ -1,4 +1,4 @@
-﻿namespace CitizenFX.Blazor.WebAssembly.Services;
+﻿namespace CitizenFX.Extensions.Blazor.WebAssembly.Services;
 
 /// <summary>
 /// Service for triggering registered client-script Nui callbacks

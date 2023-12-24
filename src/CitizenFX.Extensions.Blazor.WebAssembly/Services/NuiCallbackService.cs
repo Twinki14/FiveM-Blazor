@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.JSInterop;
 
-namespace CitizenFX.Blazor.WebAssembly.Services;
+namespace CitizenFX.Extensions.Blazor.WebAssembly.Services;
 
 /// <inheritdoc/>
 public class NuiCallbackService(IJSRuntime jsRuntime) : INuiCallbackService

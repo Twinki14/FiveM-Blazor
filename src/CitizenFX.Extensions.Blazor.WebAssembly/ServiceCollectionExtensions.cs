@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using CitizenFX.Blazor.WebAssembly.Services;
+using CitizenFX.Extensions.Blazor.WebAssembly.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace CitizenFX.Blazor.WebAssembly;
+namespace CitizenFX.Extensions.Blazor.WebAssembly;
 
 public static class ServiceCollectionExtensions
 {

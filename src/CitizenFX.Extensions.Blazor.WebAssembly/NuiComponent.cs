@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 
-namespace CitizenFX.Blazor.WebAssembly;
+namespace CitizenFX.Extensions.Blazor.WebAssembly;
 
 /// <summary>
 /// A FiveM Nui helper-component. Required for <see cref="NuiMessageHandler"/> methods to be invoked.
@@ -36,7 +36,7 @@ public class NuiComponent : ComponentBase
        
        try
        {
-           _messageHandlerMethods = FindMethods();
+           _messageHandlerMethods = FindMessageHandlerMethods();
            _lastInstanceCount = instancesCount;
            
            return _messageHandlerMethods;
@@ -54,7 +54,7 @@ public class NuiComponent : ComponentBase
         public string Type { get; } = type;
     }
 
-    private static List<MessageHandlerMethod> FindMethods()
+    private static List<MessageHandlerMethod> FindMessageHandlerMethods()
     {
         var methods = new List<MessageHandlerMethod>();
 

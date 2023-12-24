@@ -1,25 +1,28 @@
-﻿@using CitizenFX.Blazor.WebAssembly
-@using CitizenFX.Blazor.WebAssembly.Services
-@inherits NuiComponent
+﻿@using CitizenFX.Extensions.Blazor.WebAssembly
+@using CitizenFX.Extensions.Blazor.WebAssembly.Services
+@inherits CitizenFX.Extensions.Blazor.WebAssembly.NuiComponent
 
 @inject INuiCallbackService NuiCallbackService
-@inject ILogger<App> _Logger
 
+<TestPage />
 <h1>BlazorUI</h1>
+<h3>@_count</h3>
 
-@if (_hello != string.Empty) 
+@if (_count >= 10)
 {
-    <h4>Hello: @_hello</h4>
+    <TestPage />
+    <h3>New instance</h3>
 }
 
 @code {
 
-    private string _hello { get; set; } = string.Empty;
+    private int _count = 0;
     
     [NuiMessageHandler("showui:hello")]
     public async Task OnShowUi(string hello)
     {
-        _hello = hello;
+        Interlocked.Increment(ref _count);
+        
         StateHasChanged();
         
         if (hello == "before")

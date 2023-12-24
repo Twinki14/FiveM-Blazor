@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 
-namespace CitizenFX.Blazor.WebAssembly;
+namespace CitizenFX.Extensions.Blazor.WebAssembly;
 
 /// <summary>
 /// A component that attaches a JavaScript event listener to the window, to listen and distribute Nui Messages to <see cref="NuiMessageHandler"/> attributed methods.
@@ -116,7 +116,7 @@ public partial class NuiMessageListener : ComponentBase
         }
         
         // log debug here
-        _logger!.LogInformation("Attempting to invoke");
+        _logger!.LogDebug("Attempting to invoke method {MethodName} with {NumberOfParameters} parameters", identifiedMethod.Info.Name, methodValues.Count);
 
         await InvokeAsync(identifiedMethod.Info, identifiedMethod.Instance, methodValues.ToArray());
     }
