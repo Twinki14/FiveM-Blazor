@@ -60,7 +60,7 @@ public partial class NuiMessageListener : ComponentBase
     [JSInvokable]
     public static async Task OnNuiMessage(JsonDocument eventData)
     {
-        var methods = NuiComponent.FindMethods();
+        var methods = await NuiComponent.GetMessageHandlerMethods();
 
         if (!eventData.RootElement.TryGetProperty(NuiMessageHandler.Identifier, out var identifierValue))
         {
@@ -78,7 +78,7 @@ public partial class NuiMessageListener : ComponentBase
         }
 
         var identifiedMethod = identifiedMethods.First();
-        var methodParams = identifiedMethod.MethodInfo.GetParameters();
+        var methodParams = identifiedMethod.Info.GetParameters();
         var methodValues = new List<object>();
 
         foreach (var param in methodParams)
@@ -118,7 +118,7 @@ public partial class NuiMessageListener : ComponentBase
         // log debug here
         _logger!.LogInformation("Attempting to invoke");
 
-        await InvokeAsync(identifiedMethod.MethodInfo, identifiedMethod.Instance, methodValues.ToArray());
+        await InvokeAsync(identifiedMethod.Info, identifiedMethod.Instance, methodValues.ToArray());
     }
     
     private static async ValueTask InvokeAsync(MethodInfo info, object? instance, object?[]? parameters)

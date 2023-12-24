@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 using Microsoft.AspNetCore.Components;
 
 namespace CitizenFX.Blazor.WebAssembly;
@@ -11,29 +12,51 @@ namespace CitizenFX.Blazor.WebAssembly;
 /// </remarks>
 public class NuiComponent : ComponentBase
 {
-    private static readonly List<NuiComponent> Instances = new();
-    
+    private static int _lastInstanceCount;
+    private static readonly ConcurrentBag<NuiComponent> Instances = [];
+
+    private static List<MessageHandlerMethod> _messageHandlerMethods = [];
+    private static readonly SemaphoreSlim InstanceSemaphore = new(1, 1);
+        
     public NuiComponent()
     {
-        // Add the current instance to the list when instantiated
         Instances.Add(this);
-        
-        // Add an lock pattern here for caching methods
-        // so that we re-generate the known-methods cache whenever a new instance is added,
-        // but it needs to be thread-safe
-        // this needs to work with async as well?
+    }
+
+    internal static async ValueTask<IEnumerable<MessageHandlerMethod>> GetMessageHandlerMethods()
+    {
+       var instancesCount = Instances.Count;
+
+       if (instancesCount == _lastInstanceCount)
+       {
+           return _messageHandlerMethods;
+       }
+
+       await InstanceSemaphore.WaitAsync();
+       
+       try
+       {
+           _messageHandlerMethods = FindMethods();
+           _lastInstanceCount = instancesCount;
+           
+           return _messageHandlerMethods;
+       }
+       finally
+       {
+           InstanceSemaphore.Release();
+       }
     }
     
-    internal readonly struct MethodInfoWithInstance(MethodInfo methodInfo, object? instance, string type)
+    internal readonly struct MessageHandlerMethod(MethodInfo info, object? instance, string type)
     {
-        public MethodInfo MethodInfo { get; } = methodInfo;
+        public MethodInfo Info { get; } = info;
         public object? Instance { get; } = instance;
         public string Type { get; } = type;
     }
 
-    internal static IEnumerable<MethodInfoWithInstance> FindMethods()
+    private static List<MessageHandlerMethod> FindMethods()
     {
-        var methods = new List<MethodInfoWithInstance>();
+        var methods = new List<MessageHandlerMethod>();
 
         foreach (var instance in Instances)
         {
@@ -42,7 +65,7 @@ public class NuiComponent : ComponentBase
                 .Select(m =>
                 {
                     var attribute = (NuiMessageHandler) Attribute.GetCustomAttribute(m, typeof(NuiMessageHandler))!;
-                    return new MethodInfoWithInstance(m, instance, attribute.Type);
+                    return new MessageHandlerMethod(m, instance, attribute.Type);
                 })
                 .ToList();
 
@@ -60,7 +83,7 @@ public class NuiComponent : ComponentBase
                     .Select(method =>
                     {
                         var attribute = (NuiMessageHandler) Attribute.GetCustomAttribute(method, typeof(NuiMessageHandler))!;
-                        return new MethodInfoWithInstance(method, null, attribute.Type);
+                        return new MessageHandlerMethod(method, null, attribute.Type);
                     }))
                 .ToList();
 
