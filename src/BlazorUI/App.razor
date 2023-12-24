@@ -1,29 +1,30 @@
 ﻿@using CitizenFX.Blazor.WebAssembly
+@using CitizenFX.Blazor.WebAssembly.Services
 @inherits NuiComponent
 
+@inject INuiCallbackService NuiCallbackService
 @inject ILogger<App> _Logger
 
 <h1>BlazorUI</h1>
 
-@if (_clockMinutes > 0) 
+@if (_hello != string.Empty) 
 {
-    <h4>@_clockMinutes</h4>
+    <h4>Hello: @_hello</h4>
 }
 
 @code {
 
-    private int _clockMinutes { get; set; } = -1;
+    private string _hello { get; set; } = string.Empty;
     
     [NuiMessageHandler("showui:hello")]
-    public void OnShowUi(string hello, int time)
+    public async Task OnShowUi(string hello)
     {
-        _clockMinutes = time;
+        _hello = hello;
         StateHasChanged();
-    }
-    
-    [NuiMessageHandler("showui")]
-    public void OnShowUi()
-    {
-        _Logger.LogInformation("OnShowUi: {Hello}");
+        
+        if (hello == "before")
+        {
+            await NuiCallbackService.TriggerNuiCallbackAsync("getItemInfo", new {});
+        }
     }
 }

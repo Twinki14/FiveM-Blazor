@@ -1,13 +1,8 @@
 ﻿namespace CitizenFX.Blazor.WebAssembly;
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-public class NuiMessageHandler : Attribute
+public class NuiMessageHandler(string type) : Attribute
 {
-    public readonly string Type;
+    public readonly string Type = type;
     public const string Identifier = "type";
-
-    public NuiMessageHandler(string type)
-    {
-        Type = type;
-    }
 }

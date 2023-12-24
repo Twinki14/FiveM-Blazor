@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -17,8 +18,6 @@ public partial class NuiMessageListener : ComponentBase
 
     private static NuiMessageListener? _instance;
     private static ILogger<NuiMessageListener>? _logger;
-
-    public static JsonSerializerOptions JsonSerializerOptions = new(); 
 
     protected override void OnInitialized()
     {
@@ -40,26 +39,28 @@ public partial class NuiMessageListener : ComponentBase
         builder.AddAttribute(1, "type", "text/javascript");
         
         builder.AddMarkupContent(2, $@"
-        window.addEventListener('message', (event) => {{
-            DotNet.invokeMethod('{_assemblyName}', '{_nuiMessageMethod}', event.data);
+        window.addEventListener('message', async (event) => {{
+            await DotNet.invokeMethodAsync('{_assemblyName}', '{_nuiMessageMethod}', event.data);
         }});");
         
         builder.CloseElement();
     }
 
     [JSInvokable]
-    public static void OnNuiMessage(JsonDocument eventData)
+    public static async Task OnNuiMessage(JsonDocument eventData)
     {
         var methods = NuiComponent.FindMethods();
 
         if (!eventData.RootElement.TryGetProperty(NuiMessageHandler.Identifier, out var identifierValue))
         {
+            // log debug here
             return;
         }
         
         var identifiedMethods = methods.Where(m => m.Type == identifierValue.GetString()).ToList();
         
-        // Optionally, if it's > 1, then check and make sure all identified methods have the same number of params and all params are have the same types and names
+        // Optionally, if it's > 1, then check and make sure all identified methods have the same number of params and all params have the same types and names
+        // filter identified methods down further
         if (identifiedMethods.Count > 1)
         {
             throw new InvalidOperationException($"More than one method is attached to the {nameof(NuiMessageHandler)} attribute with the type identifier {identifierValue}");
@@ -80,7 +81,7 @@ public partial class NuiMessageListener : ComponentBase
                 
                 if (eventData.RootElement.TryGetProperty(param.Name, out var element))
                 {
-                    var deserialized = element.Deserialize(param.ParameterType, JsonSerializerOptions);
+                    var deserialized = element.Deserialize(param.ParameterType, NuiJsonSerializerOptions.Options);
                     if (deserialized is not null)
                     {
                         methodValues.Add(deserialized);
@@ -103,8 +104,29 @@ public partial class NuiMessageListener : ComponentBase
             }
         }
         
-        identifiedMethod.MethodInfo.Invoke(identifiedMethod.Instance, methodValues.ToArray());
+        // log debug here
+        _logger!.LogInformation("Attempting to invoke");
+
+        await InvokeAsync(identifiedMethod.MethodInfo, identifiedMethod.Instance, methodValues.ToArray());
     }
+    
+    private static async ValueTask InvokeAsync(MethodInfo info, object? instance, object?[]? parameters)
+    {
+        if (info.ReturnType == typeof(Task))
+        {
+            await (info.Invoke(instance, parameters) as Task)!;
+        }
+        else if (info.ReturnType.IsGenericType &&
+                 info.ReturnType.GetGenericTypeDefinition() == typeof(Task<>))
+        {
+            await (info.Invoke(instance, parameters) as Task)!;
+        }
+        else
+        {
+            info.Invoke(instance, parameters);
+        }
+    }
+    
     
     [LoggerMessage(1, LogLevel.Critical, "Critical exception in {caller} when attempting to bind to a handler method with a parameter name {parameterName} and parameter type {parameterType}", EventName = "Handler method parameter JSON binding")]
     static partial void LogCriticalJsonBinding(ILogger logger, Exception ex, string? parameterName, Type parameterType, [CallerMemberName] string caller = nameof(NuiMessageListener));
